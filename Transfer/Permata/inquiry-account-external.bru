@@ -1,0 +1,27 @@
+meta {
+  name: Inquiry Account External
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-account/inquiry
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Accept-Language: id
+}
+
+body:json {
+  {
+    "beneficiaryBankCode": "016",
+    "beneficiaryAccountNo": "41237031"
+  }
+}
+
+assert {
+  res.status: eq 200
+}

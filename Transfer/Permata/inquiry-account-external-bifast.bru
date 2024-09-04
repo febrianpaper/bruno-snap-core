@@ -1,0 +1,27 @@
+meta {
+  name: Inquiry Account Internal Bifast
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-account/inquiry
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Accept-Language: id
+}
+
+body:json {
+  {
+    "beneficiaryBankCode": "011",
+    "beneficiaryAccountNo": "903600635936"
+  }
+}
+
+assert {
+  res.status: eq 200
+}

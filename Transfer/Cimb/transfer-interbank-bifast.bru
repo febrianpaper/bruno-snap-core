@@ -1,0 +1,40 @@
+meta {
+  name: Transfer Interbank Bifast
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-transfer
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Accept-Language: id
+  x-external-id: {{external_id}}
+}
+
+body:json {
+  {
+    "amount": {
+        "value": "20901.00",
+        "currency": "IDR"
+    },
+    "beneficiaryAccountName": "AGUS",
+    "beneficiaryAccountNo": "903600635936",
+    "beneficiaryBankCode": "011",
+    "remark": "TEST BIFAST CREDIT TRANSFER",
+    "additionalInfo": {}
+  }
+}
+
+vars:pre-request {
+  external_id: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  bru.setVar("external_id", nanoid());
+}

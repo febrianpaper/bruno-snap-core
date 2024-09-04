@@ -1,0 +1,30 @@
+meta {
+  name: gen-inquiry-signature
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/utilities/signature-service
+  body: json
+  auth: none
+}
+
+headers {
+  X-CLIENT-SECRET: {{client_secret}}
+  X-TIMESTAMP: {{timestamp}}
+  AccessToken: Bearer {{va_b2b_token}}
+  HttpMethod: POST
+  EndpoinUrl: /api/v1.0/transfer-va/inquiry
+  Content-Type: application/json
+}
+
+body:json {
+  { "partnerServiceId": "7663", "customerNo": "7001085933245068", "virtualAccountNo": "{{vaNumber}}", "channelCode": 751, "inquiryRequestId": "{{inqReqId}}" }
+}
+
+vars:pre-request {
+  vaNumber: 7663888855450614
+  inqReqId: 20240826000001
+  client_secret: {{process.env.qa_secret}}
+}

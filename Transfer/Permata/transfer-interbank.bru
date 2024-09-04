@@ -1,0 +1,45 @@
+meta {
+  name: Transfer Interbank
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-transfer
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Accept-Language: id
+  x-external-id: {{external_id}}
+}
+
+body:json {
+  {
+    "amount": {
+      "value": "10000.00",
+      "currency": "IDR"
+    },
+    "beneficiaryAccountName": "TB DUMMY",
+    "beneficiaryAccountNo": "888801000187509", // invalid account
+    "beneficiaryBankCode": "014",
+    "beneficiaryBankName": "BANK BCA",
+    "beneficiaryEmail": "wbpunya@gmail.com",
+    "currency": "IDR",
+    "additionalInfo": {
+      "sourceAccountName": "ANGGA",
+      "remark": "Interbank Transfer"
+    }
+  }
+}
+
+vars:pre-request {
+  external_id: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  bru.setVar("external_id", nanoid());
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Inquiry Status By External ID
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-transfer/by-external-id/2024031445471200001
+  body: none
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+}

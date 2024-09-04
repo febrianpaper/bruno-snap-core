@@ -1,0 +1,42 @@
+meta {
+  name: Transfer Intrabank
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-transfer
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Accept-Language: id
+  x-external-id: {{external_id}}
+}
+
+body:json {
+    {
+        "amount": {
+            "value": "10000",
+            "currency": "IDR"
+        },
+        "beneficiaryAccountNo": "701075331",
+        "beneficiaryBankCode": "013",
+        "currency": "IDR",
+        "customerReference": "0010052019",
+        "remark": "Transfer Overbooking",
+        "beneficiaryAccountName": "ANGGA",
+        "additionalInfo": {}
+    }
+}
+
+vars:pre-request {
+  external_id: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  bru.setVar("external_id", nanoid());
+}

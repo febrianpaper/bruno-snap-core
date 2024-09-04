@@ -1,0 +1,19 @@
+meta {
+  name: Inquiry Status
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-transfer/inquiry-status/:uuid
+  body: none
+  auth: none
+}
+
+params:path {
+  uuid: 68369515-d868-404f-b690-e1c44905e2d5
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+}

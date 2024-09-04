@@ -1,0 +1,38 @@
+meta {
+  name: get-b2b-token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/access-token/b2b
+  body: json
+  auth: none
+}
+
+headers {
+  X-CLIENT-KEY: {{client_id}}
+  X-SIGNATURE: {{va_b2b_signature}}
+  X-TIMESTAMP: {{timestamp}}
+  Content-Type: application/json
+  ~Authorization: Bearer {{va_b2b_token}}
+}
+
+body:json {
+  { "grantType":"client_credentials" }
+}
+
+vars:pre-request {
+  client_id: {{process.env.qa_id}}
+  signature: 
+}
+
+script:pre-request {
+  const signature = bru.getEnvVar("va_b2b_signature");
+  console.log(signature);
+}
+
+script:post-response {
+  const body = res.getBody();
+  bru.setEnvVar("va_b2b_token",body.accessToken);
+}

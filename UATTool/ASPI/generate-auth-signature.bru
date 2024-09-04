@@ -1,0 +1,28 @@
+meta {
+  name: generate-auth-signature
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://apidevportal.aspi-indonesia.or.id:44310/api/v1.0/utilities/signature-auth
+  body: json
+  auth: none
+}
+
+headers {
+  X-CLIENT-KEY: f15c711f6ea645bf98002b334b5ddd2c
+  Private_Key: xq3yMSM/q4a1aZnpg42A1DUmBumig7RLPW4TkvPR5Lw=
+  X-TIMESTAMP: {{timestamp}}
+}
+
+body:json {
+  {}
+}
+
+script:post-response {
+  const body = res.body;
+  if(body) {
+    bru.setEnvVar("aspi_auth_signature", body.signature);  
+  }
+}

@@ -1,0 +1,53 @@
+meta {
+  name: conflict
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{mandiri_pusat_base_url}}/openapi/customers/v2.1/balance-inquiry
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-PARTNER-ID: {{process.env.mandiri_pusat_partner_id}}
+  X-EXTERNAL-ID: 409001
+  X-SIGNATURE: {{signature}}
+  CHANNEL-ID: 865
+  Authorization: Bearer {{mandiri_pusat_b2b_token}}
+}
+
+body:json {
+  {
+    "accountNo":"1150097011284"
+  }
+    
+}
+
+vars:pre-request {
+  external_id: 
+  signature: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  const reqBody = JSON.stringify(req.body);
+  const {createTrxSignature} = require("./libs/utils.js");
+  
+  const b2bToken = bru.getEnvVar("mandiri_pusat_b2b_token");
+  const clientSecret = bru.getProcessEnv("mandiri_pusat_client_secret");
+  const timestamp = bru.getEnvVar("timestamp");
+  const signatureObj = {
+      url: "/openapi/customers/v2.1/balance-inquiry",
+      httpMethod: "POST",
+      accessToken: b2bToken,
+      clientSecret: clientSecret,
+      timestamp: timestamp,
+      bodyPayload: reqBody
+  }
+  const signature = createTrxSignature(signatureObj);
+  bru.setVar("external_id", nanoid());
+  bru.setVar("signature",signature);
+}

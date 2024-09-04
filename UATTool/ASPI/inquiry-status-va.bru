@@ -1,0 +1,49 @@
+meta {
+  name: inquiry-status-va
+  type: http
+  seq: 4
+}
+
+post {
+  url: https://apidevportal.aspi-indonesia.or.id:44310/api/v1.0/transfer-va/status
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-PARTNER-ID: f15c711f6ea645bf98002b334b5ddd2c
+  X-EXTERNAL-ID: {{external_id}}
+  X-SIGNATURE: {{signature}}
+  CHANNEL-ID: 865
+  Authorization: Bearer {{aspi_b2b_token}}
+}
+
+body:json {
+  {"additionalInfo":{},"customerNo":"12345678901234567890","inquiryRequestId":"abcdef-123456-abcdef","partnerServiceId":"088899","paymentRequestId":"abcdef-123456-abcdef","virtualAccountNo":"08889912345678901234567890"}
+}
+
+vars:pre-request {
+  external_id: 
+  signature: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  const reqBody = JSON.stringify(req.body);
+  const {createTrxSignature} = require("./libs/utils.js");
+  
+  const b2bToken = bru.getEnvVar("aspi_b2b_token");
+  const signatureObj = {
+      url: "/api/v1.0/transfer-va/status",
+      httpMethod: "POST",
+      accessToken: b2bToken,
+      clientSecret: "E824JTuYU21tvwpe0XL2D2WsO0SzCNKflgFoXSQAmRQ=",
+      timestamp: bru.getEnvVar("timestamp"),
+      bodyPayload: reqBody
+  }
+  const signature = createTrxSignature(signatureObj);
+  console.log("signature",signature);
+  bru.setVar("external_id", nanoid());
+  bru.setVar("signature",signature);
+}

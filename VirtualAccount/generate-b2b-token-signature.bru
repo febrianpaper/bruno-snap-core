@@ -1,0 +1,27 @@
+meta {
+  name: generate-b2b-token-signature
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/utilities/signature-auth
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-CLIENT-KEY: {{process.env.qa_id}}
+  Content-Type: application/json
+}
+
+body:json {
+  {"grantType":"client_credential"}
+}
+
+script:post-response {
+  const resBody = res.getBody()
+  console.log(resBody)
+  bru.setEnvVar("va_b2b_signature", resBody.signature)
+}

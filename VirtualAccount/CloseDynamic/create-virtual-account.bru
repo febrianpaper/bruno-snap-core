@@ -1,0 +1,72 @@
+meta {
+  name: create-virtual-account
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/virtual-account/create
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "customerNo": "04918815-e291-4930-a44e-509dcf1873ed",
+    "accountName": "Harsya Feb",
+    "accountEmail": "feb@harsya.com",
+    "accountPhone": "08123456789",
+    "subCompany": "harysa-sub",
+    "acquirer": "{{bank}}",
+    "vaNumber": "{{number}}",
+    "mid": "{{mid}}",
+    "isClosedAmount": true,
+    "isSingleUse": true,
+    "totalAmount": {
+      "value": "10000.00",
+      "currency": "IDR"
+    },
+    "feeAmount": {
+      "value": "0.00",
+      "currency": "IDR"
+    },
+    "billDetails": [
+      {
+        "billerReferenceId": "ref123",
+        "billCode": "ELEC",
+        "billNo": "1234",
+        "billName": "Electricity Bill",
+        "billShortName": "Electricity",
+        "billDescription": {
+          "en": "Monthly electricity bill",
+          "id": "Tagihan listrik bulanan"
+        },
+        "billSubCompany": "PLN",
+        "billAmount": {
+          "amount": "10000.00",
+          "currency": "IDR"
+        },
+        "additionalInfo": {
+          "period": "Jan 2022"
+        }
+      }
+    ],
+    "freeTexts": [
+      {
+        "english": "Hello World",
+        "indonesia": "Hallo Dunia"
+      }
+    ]
+  }
+}
+
+vars:pre-request {
+  bank: permata
+  mid: 8888
+  number: 
+}

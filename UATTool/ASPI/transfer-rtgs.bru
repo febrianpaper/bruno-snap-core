@@ -1,0 +1,67 @@
+meta {
+  name: transfer-rtgs
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://apidevportal.aspi-indonesia.or.id:44310/api/v1.0/transfer-rtgs
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-PARTNER-ID: f15c711f6ea645bf98002b334b5ddd2c
+  X-EXTERNAL-ID: {{external_id}}
+  X-SIGNATURE: {{signature}}
+  CHANNEL-ID: 865
+  Authorization: Bearer {{aspi_b2b_token}}
+}
+
+body:json {
+  {
+    "amount": {
+      "value": "100000000.00",
+      "currency": "IDR"
+    },
+    "remark": "remark test",
+    "senderPhone": "080901020304",
+    "additionalInfo": {},
+    "sourceAccountNo": "2000200202",
+    "transactionDate": "2024-09-03T14:15:35+07:00",
+    "customerReference": "17253477360991601138",
+    "partnerReferenceNo": "2020102900000000000001",
+    "beneficiaryBankCode": "008",
+    "beneficiaryAccountNo": "8000800808",
+    "beneficiaryAccountName": "Febriansyah",
+    "beneficiaryCustomerType": "1",
+    "beneficiaryCustomerResidence": "1"
+  }
+}
+
+vars:pre-request {
+  external_id: 
+  signature: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  const reqBody = JSON.stringify(req.body);
+  const {createTrxSignature} = require("./libs/utils.js");
+  
+  
+  const b2bToken = bru.getEnvVar("aspi_b2b_token");
+  const signatureObj = {
+      url: "/api/v1.0/transfer-rtgs",
+      httpMethod: "POST",
+      accessToken: b2bToken,
+      clientSecret: "E824JTuYU21tvwpe0XL2D2WsO0SzCNKflgFoXSQAmRQ=",
+      timestamp: bru.getEnvVar("timestamp"),
+      bodyPayload: reqBody
+  }
+  const signature = createTrxSignature(signatureObj);
+  console.log("signature",signature);
+  bru.setVar("external_id", nanoid());
+  bru.setVar("signature",signature);
+}

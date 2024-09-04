@@ -1,0 +1,86 @@
+meta {
+  name: inquiry
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/transfer-va/inquiry
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-SIGNATURE: {{va_trx_signature}}
+  X-PARTNER-ID: 82150823919040624621
+  X-EXTERNAL-ID: {{externalID}}
+  CHANNEL-ID: 751
+  Content-Type: application/json
+  Authorization: Bearer {{va_b2b_token}}
+}
+
+body:json {
+  { "partnerServiceId": "7663", "customerNo": "7001085933245068", "virtualAccountNo": "{{vaNumber}}", "channelCode": 751, "inquiryRequestId": "{{inqReqId}}" }
+}
+
+vars:pre-request {
+  vaNumber: 
+  externalID: 1
+  inqReqId: 20240826000001
+  client_secret: {{process.env.qa_secret}}
+}
+
+script:pre-request {
+  const axios = require('axios');
+  
+  const time = new Date().getTime();
+  const externalID = Math.floor(time);
+  const clientSecret = bru.getVar("client_secret");
+  const timeStamp = bru.getEnvVar("timestamp");
+  const vaNumber  = bru.getVar("vaNumber");
+  const inqReqId = bru.getVar("inqReqId");
+  const b2bToken = bru.getEnvVar("va_b2b_token");
+  
+  console.log("body", req.body);
+  console.log("url", req.url);
+  
+  bru.setVar("externalID",externalID);
+  console.log("test")
+  const options = {
+    method: 'POST',
+    url: 'http://localhost:3000/api/v1.0/utilities/signature-service',
+    headers: {
+      'X-CLIENT-SECRET': clientSecret,
+      'X-TIMESTAMP': timeStamp,
+      AccessToken: 'Bearer '+b2bToken,
+      HttpMethod: 'POST',
+      EndpoinUrl: '/api/v1.0/transfer-va/inquiry',
+      'Content-Type': 'application/json',
+      'content-type': 'application/json'
+    },
+    data: {
+      partnerServiceId: '7663',
+      customerNo: '7001085933245068',
+      virtualAccountNo: vaNumber,
+      channelCode: 751,
+      inquiryRequestId: inqReqId
+    }
+  };
+  
+  axios.request(options)
+  .then((response) => {
+    console.log("option", options);
+    console.log("response", response);
+  })
+  .catch(function (error) {
+    console.log("error",error);
+  });
+  
+  // try {
+  //   const data = await axios.request(options);
+  //   console.log("data", data);
+  // } catch (error) {
+  //   console.error(error);
+  // }
+}

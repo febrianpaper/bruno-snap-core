@@ -1,0 +1,28 @@
+meta {
+  name: get-b2b-token
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://apidevportal.aspi-indonesia.or.id:44310/api/v1.0/access-token/b2b
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-SIGNATURE: {{aspi_auth_signature}}
+  X-CLIENT-KEY: f15c711f6ea645bf98002b334b5ddd2c
+}
+
+body:json {
+  {"grantType":"client_credentials"}
+}
+
+script:post-response {
+  const body = res.body;
+  if(body) {
+    bru.setEnvVar("aspi_b2b_token", body.accessToken);
+  }
+}

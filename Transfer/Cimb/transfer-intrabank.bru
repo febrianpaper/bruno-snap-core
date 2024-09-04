@@ -1,0 +1,43 @@
+meta {
+  name: Transfer Intrabank
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{snap_core_url}}/api/v1.0/internal/bank-transfer
+  body: json
+  auth: none
+}
+
+headers {
+  x-internal-service-key: {{process.env.internal_service_key}}
+  Accept-Language: id
+  x-external-id: {{external_id}}
+}
+
+body:json {
+  {
+    "beneficiaryAccountName": "Song Jong Ki",
+    "amount": {
+      "value": "50000.00",
+      "currency": "IDR"
+    },
+    "currency": "IDR",
+    "remark": "mock 2001700",
+    "purposeOfTransaction": "99",
+    "beneficiaryBankCode": "022",
+    "beneficiaryAddress": "JL Brigjend Slamet Riadi",
+    "beneficiaryBICCode": "CENAIDJA",
+    "beneficiaryAccountNo": "800066721000"
+  }
+}
+
+vars:pre-request {
+  external_id: 
+}
+
+script:pre-request {
+  const { nanoid } = require("nanoid");
+  bru.setVar("external_id", nanoid());
+}
