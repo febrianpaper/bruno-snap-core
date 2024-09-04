@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{mandiri_pusat_base_url}}/openapi/customers/v2.0/account-inquiry-internal
+  url: {{mandiri_pusat_base_url}}/openapi/transactions/v2.1/transfer/status
   body: json
   auth: none
 }
@@ -21,8 +21,10 @@ headers {
 
 body:json {
   {
-    "beneficiaryAccountNo":"60004400184"
-  }   
+    "originalExternalId": "504001",
+    "originalPartnerReferenceNo": "20220519214808964",
+    "serviceCode": "18"
+  }  
 }
 
 vars:pre-request {
@@ -39,7 +41,7 @@ script:pre-request {
   const clientSecret = bru.getProcessEnv("mandiri_pusat_client_secret");
   const timestamp = bru.getEnvVar("timestamp");
   const signatureObj = {
-      url: "/openapi/customers/v2.0/account-inquiry-internal",
+      url: "/openapi/transactions/v2.1/transfer/status",
       httpMethod: "POST",
       accessToken: b2bToken,
       clientSecret: clientSecret,

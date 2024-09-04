@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{mandiri_pusat_base_url}}/openapi/customers/v2.0/account-inquiry-internal
+  url: {{mandiri_pusat_base_url}}/openapi/transactions/v2.0/transfer-intrabank
   body: json
   auth: none
 }
@@ -21,8 +21,28 @@ headers {
 
 body:json {
   {
-    "beneficiaryAccountNo":"60004400184"
-  }   
+    "partnerReferenceNo": "ITN0001",
+    "amount": {
+      "value": "11000.00",
+      "currency": "IDR"
+    },
+    "sourceAccountNo": "1150006399259",
+    "beneficiaryAccountNo": "60004400184",
+    "remark": "PTROpenAPI",
+    "transactionDate": "2022-06-20T10:31:22+07:00",
+    "beneficiaryEmail": "sandbox_test@gmail.com",
+    "additionalInfo": {
+      "reportCode": "abcd",
+      "senderInstrument": "1",
+      "senderAccountNo": "08786561231224",
+      "senderName": "rendimatrido",
+      "senderCountry": "id",
+      "senderCostumerType": "1",
+      "beneficiaryAccountName": "AjojiAjojo",
+      "beneficiaryInstrument": "1",
+      "beneficiaryCustomerType": "1"
+    }
+  } 
 }
 
 vars:pre-request {
@@ -39,7 +59,7 @@ script:pre-request {
   const clientSecret = bru.getProcessEnv("mandiri_pusat_client_secret");
   const timestamp = bru.getEnvVar("timestamp");
   const signatureObj = {
-      url: "/openapi/customers/v2.0/account-inquiry-internal",
+      url: "/openapi/transactions/v2.0/transfer-intrabank",
       httpMethod: "POST",
       accessToken: b2bToken,
       clientSecret: clientSecret,

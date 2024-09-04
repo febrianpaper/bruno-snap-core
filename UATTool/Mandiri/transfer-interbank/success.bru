@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{mandiri_pusat_base_url}}/openapi/customers/v2.0/account-inquiry-internal
+  url: {{mandiri_pusat_base_url}}/openapi/transactions/v2.0/transfer-interbank
   body: json
   auth: none
 }
@@ -21,8 +21,24 @@ headers {
 
 body:json {
   {
-    "beneficiaryAccountNo":"60004400184"
-  }   
+    "sourceAccountNo": "1150006391330",
+    "beneficiaryAccountNo": "3350022022",
+    "beneficiaryAccountName": "DIMAS",
+    "beneficiaryBankCode": "014",
+    "beneficiaryBankName": "BankBCA",
+    "amount": {
+      "value": "15000",
+      "currency": "IDR"
+    },
+    "transactionDate": "2022-06-13T12:15:03+07:00",
+    "partnerReferenceNo": "20220624150032143",
+    "beneficiaryEmail": "sandbox_test@gmail.com",
+    "beneficiaryAddress": "Jakarta",
+    "additionalInfo": {
+      "switcher": "ATMB"
+    },
+    "remark": ""
+  }  
 }
 
 vars:pre-request {
@@ -39,7 +55,7 @@ script:pre-request {
   const clientSecret = bru.getProcessEnv("mandiri_pusat_client_secret");
   const timestamp = bru.getEnvVar("timestamp");
   const signatureObj = {
-      url: "/openapi/customers/v2.0/account-inquiry-internal",
+      url: "/openapi/transactions/v2.0/transfer-interbank",
       httpMethod: "POST",
       accessToken: b2bToken,
       clientSecret: clientSecret,

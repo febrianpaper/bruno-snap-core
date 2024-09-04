@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{mandiri_pusat_base_url}}/openapi/customers/v2.0/account-inquiry-internal
+  url: {{mandiri_pusat_base_url}}/openapi/customers/v2.0/account-inquiry-external
   body: json
   auth: none
 }
@@ -21,8 +21,12 @@ headers {
 
 body:json {
   {
-    "beneficiaryAccountNo":"60004400184"
-  }   
+    "beneficiaryBankCode":"014",
+    "beneficiaryAccountNo":"60004400184",
+    "additionalInfo": {
+      "switcher":""
+    }
+  }
 }
 
 vars:pre-request {
@@ -39,7 +43,7 @@ script:pre-request {
   const clientSecret = bru.getProcessEnv("mandiri_pusat_client_secret");
   const timestamp = bru.getEnvVar("timestamp");
   const signatureObj = {
-      url: "/openapi/customers/v2.0/account-inquiry-internal",
+      url: "/openapi/customers/v2.0/account-inquiry-external",
       httpMethod: "POST",
       accessToken: b2bToken,
       clientSecret: clientSecret,
@@ -49,15 +53,4 @@ script:pre-request {
   const signature = createTrxSignature(signatureObj);
   bru.setVar("external_id", nanoid());
   bru.setVar("signature",signature);
-}
-
-docs {
-  ## Account
-  
-  | Result | External ID | Account |
-  | --- | --- | --- |
-  | Success | 200001 | 60004400184 |
-  | Success USD | 200002 | 60007068459 |
-  | Conflict | 409001 | 60004400184 |
-  | Inactive Account | 403001 | 1390094033549 |
 }

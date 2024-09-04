@@ -1,0 +1,43 @@
+meta {
+  name: get-b2b-token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{mandiri_pusat_base_url}}/openapi/auth/v2.0/access-token/b2b
+  body: json
+  auth: none
+}
+
+headers {
+  X-TIMESTAMP: {{timestamp}}
+  X-SIGNATURE: {{signature}}
+  X-CLIENT-KEY: {{process.env.mandiri_pusat_client_id}}
+}
+
+body:json {
+  {"grantType":"client_credentials"}
+}
+
+vars:pre-request {
+  signature: 
+}
+
+script:pre-request {
+  const {createAuthSignature, getTimestamp} = require("./libs/utils.js");
+  const privKey = bru.getProcessEnv("mandiri_pusat_private_key");
+  const clientID = bru.getProcessEnv("mandiri_pusat_client_id");
+  const timestamp = getTimestamp();
+  const signature = createAuthSignature(privKey, clientID, timestamp);
+  bru.setEnvVar("timestamp",timestamp);
+  
+  bru.setVar("signature",signature);
+}
+
+script:post-response {
+  const body = res.body;
+  if(body) {
+    bru.setEnvVar("mandiri_pusat_b2b_token", body.accessToken);
+  }
+}
